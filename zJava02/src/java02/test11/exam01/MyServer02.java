@@ -15,12 +15,12 @@ public class MyServer02 {
 
 	public static void main(String[] args) throws Exception {
 		//----------------------------------- 자바 네트워킹 프로그램
-		// 클라이언트와 통신을 담당할 객체 생성
 		System.out.println("서버 소켓 생성");
 		
 		
+		// 클라이언트와 통신을 담당할 객체 생성
 		// 두 번째 backlog 값은 대기열 길이를 지정한다.
-		ServerSocket ss = new ServerSocket(8888, 1); //
+		ServerSocket ss = new ServerSocket(8888, 1);
 		
 		// 대기열에 있는(연결을 대기하고 있는) 클라리언트들 중에서 하나 선택하기
 		// => 선택할 클라이언트와의 통신을 담당할 Socket 객체를 리턴
