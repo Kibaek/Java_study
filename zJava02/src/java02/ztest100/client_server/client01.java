@@ -1,4 +1,4 @@
-package java02.test100.client_server;
+package java02.ztest100.client_server;
 
 import java.io.PrintStream;
 import java.net.Socket;

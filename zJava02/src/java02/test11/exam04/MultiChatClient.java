@@ -16,14 +16,18 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
+//------------------------------------------------------------------------------
+
 @SuppressWarnings("serial")
-public class ChatClient extends Frame implements ActionListener {
+public class MultiChatClient extends Frame implements ActionListener {
   TextField tfServerAddr = new TextField(20);
   TextField tfName = new TextField(10);
   Button btnConnect = new Button("연결");
   TextArea taContent = new TextArea();
   TextField tfInput = new TextField(30);
   Button btnSend = new Button("보내기");
+  
+//------------------------------------------------------------------------------
   
   String username;
   String serverAddress;
@@ -32,8 +36,26 @@ public class ChatClient extends Frame implements ActionListener {
   Scanner in;
   PrintStream out;
   
-  public ChatClient() {
-    // 윈도우 준비
+//------------------------------------------------------------------------------
+  
+  public class ChatReaderThread extends Thread {
+    @Override
+    public void run() {
+      try {
+        String message = null;
+        while (true) {
+          message = in.nextLine();
+          taContent.append(message + "\n");
+        }
+      } catch (Exception e) {
+        System.out.println("데이터 수신중 오류 발생!");
+      }
+    }
+  }
+
+//------------------------------------------------------------------------------
+  
+  public MultiChatClient() {
     Panel toolbar = new Panel(new FlowLayout(FlowLayout.LEFT));
     toolbar.add(new Label("이름:"));
     toolbar.add(tfName);
@@ -73,7 +95,7 @@ public class ChatClient extends Frame implements ActionListener {
   }
   
   public static void main(String[] args) {
-    ChatClient wnd = new ChatClient();
+    MultiChatClient wnd = new MultiChatClient();
     wnd.setSize(400, 600);
     wnd.setVisible(true);
   }
@@ -91,23 +113,15 @@ public class ChatClient extends Frame implements ActionListener {
         in = new Scanner(socket.getInputStream());
         out = new PrintStream(socket.getOutputStream());
         
-        ChatReaderThread reader = new ChatReaderThread(in, taContent);
+        ChatReaderThread reader = new ChatReaderThread();
         reader.start();
-        
-        out.println("hello " + username);
         
       } catch (Exception ex) {
         ex.printStackTrace();
       }
       
-    } else { // 보내기 버튼을 눌렀다면,
-      //1) 화면에 보낼 내용을 먼저 출력한다.
-      taContent.append("나:" + tfInput.getText() + "\n");
-      
-      //2) 서버에 입력 내용을 보낸다.
-      out.println(tfInput.getText());
-      
-      //3) 입력 상자를 초기화 한다.
+    } else {
+      out.println(username + ":" + tfInput.getText());
       tfInput.setText("");
     }
     
